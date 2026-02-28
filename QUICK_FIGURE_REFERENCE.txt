@@ -1,0 +1,119 @@
+═══════════════════════════════════════════════════════════════════════════════
+QUICK REFERENCE: FIGURE CAPTIONS FOR RESEARCH PAPER
+═══════════════════════════════════════════════════════════════════════════════
+
+FIGURE 1: System Architecture
+───────────────────────────────────────────────────────────────────────────────
+LOCATION: Section III.A (Methodology - System Architecture)
+FILE: screenshots/Figure1_System_Architecture.png
+
+CAPTION:
+Fig. 1. System architecture showing four layers: Presentation (Streamlit 
+dashboard with five tabs), Application (Python analysis pipeline), Data 
+(SQLite + YouTube API v3), and Infrastructure (Docker containerization).
+
+───────────────────────────────────────────────────────────────────────────────
+
+FIGURE 2: Video Browser Tab
+───────────────────────────────────────────────────────────────────────────────
+LOCATION: Section III.F (Methodology - Interactive Dashboard)
+FILE: screenshots/Figure2.png
+
+CAPTION:
+Fig. 2. Video Browser tab interface showing channel input, video fetching 
+with configurable limits, and expandable video cards with analysis options.
+
+───────────────────────────────────────────────────────────────────────────────
+
+FIGURE 3: Live Monitoring Tab
+───────────────────────────────────────────────────────────────────────────────
+LOCATION: Section III.F (Methodology - Interactive Dashboard)
+FILE: screenshots/Figure3.png
+
+CAPTION:
+Fig. 3. Live Monitoring tab displaying real-time sentiment trends, metric 
+cards, and color-coded sample comments with refresh functionality.
+
+───────────────────────────────────────────────────────────────────────────────
+
+FIGURE 4: Manual Check Analysis Results
+───────────────────────────────────────────────────────────────────────────────
+LOCATION: Section III.F (Methodology - Interactive Dashboard)
+FILE: screenshots/Figure4.png
+
+CAPTION:
+Fig. 4. Manual Check analysis results showing sentiment distribution 
+histogram, category pie chart, word cloud, sample comments, and statistics table.
+
+───────────────────────────────────────────────────────────────────────────────
+
+FIGURE 5: Correlation Heatmap
+───────────────────────────────────────────────────────────────────────────────
+LOCATION: Section V.C (Results - Feature Analysis)
+FILE: output/figures/correlation_heatmap.png (or generate new)
+
+CAPTION:
+Fig. 5. Correlation heatmap between sentiment, engagement metrics, comment 
+length, and emoji count, showing positive sentiment-likes correlation (r=0.31).
+
+───────────────────────────────────────────────────────────────────────────────
+
+FIGURE 6: Topic Modeling Visualization
+───────────────────────────────────────────────────────────────────────────────
+LOCATION: Section V.C (Results - Feature Analysis)
+FILE: screenshots/Figure6.png
+
+CAPTION:
+Fig. 6. Topic modeling visualization with five extracted topics showing keyword 
+clouds and sentiment scores per topic (e.g., "Product Quality" +0.32, 
+"Pricing Concerns" -0.18).
+
+───────────────────────────────────────────────────────────────────────────────
+
+FIGURE 7: Aspect-Based Sentiment Bar Chart
+───────────────────────────────────────────────────────────────────────────────
+LOCATION: Section V.C (Results - Feature Analysis)
+FILE: (Need to generate)
+
+CAPTION:
+Fig. 7. Aspect-based sentiment bar chart displaying sentiment scores for 12 
+aspects, with positive aspects (video quality, content) and negative aspects 
+(ads, clickbait) highlighted.
+
+───────────────────────────────────────────────────────────────────────────────
+
+FIGURE 8: 30-Day Sentiment Trends
+───────────────────────────────────────────────────────────────────────────────
+LOCATION: Section V.E (Results - Real-time Monitoring)
+FILE: screenshots/Figure8.png
+
+CAPTION:
+Fig. 8. Thirty-day sentiment trend analysis showing temporal evolution with 
+alert markers indicating threshold breaches (>20% sentiment drop).
+
+───────────────────────────────────────────────────────────────────────────────
+
+FIGURE 9: Case Study - Sentiment Recovery
+───────────────────────────────────────────────────────────────────────────────
+LOCATION: Section V.E (Results - Real-time Monitoring)
+FILE: (Need to create from monitoring history)
+
+CAPTION:
+Fig. 9. Case study showing sentiment recovery: initial decline (+0.28 to -0.15), 
+alert trigger, creator intervention, and recovery to +0.08 within 24 hours.
+
+───────────────────────────────────────────────────────────────────────────────
+
+PLACEMENT ORDER IN PAPER:
+───────────────────────────────────────────────────────────────────────────────
+1. Fig. 1  → Section III.A (Methodology - System Architecture)
+2. Fig. 2  → Section III.F (Methodology - Interactive Dashboard)
+3. Fig. 3  → Section III.F (Methodology - Interactive Dashboard)
+4. Fig. 4  → Section III.F (Methodology - Interactive Dashboard)
+5. Fig. 5  → Section V.C (Results - Feature Analysis)
+6. Fig. 6  → Section V.C (Results - Feature Analysis)
+7. Fig. 7  → Section V.C (Results - Feature Analysis)
+8. Fig. 8  → Section V.E (Results - Real-time Monitoring)
+9. Fig. 9  → Section V.E (Results - Real-time Monitoring)
+
+═══════════════════════════════════════════════════════════════════════════════

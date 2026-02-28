@@ -1,0 +1,30 @@
+Windows 11 - Quick Run Commands
+================================
+
+IMPORTANT: Use ONE of these commands based on your terminal:
+
+1. COMMAND PROMPT (CMD) - Single Line:
+   docker run -d --name youtube-sentiment -p 8501:8501 -e YOUTUBE_API_KEY=AIzaSyBvlqgKW9aFMKpaZK-jOc8KvF_cC8QbOdw mrtweaker/youtube-sentiment-analysis:latest
+
+2. COMMAND PROMPT (CMD) - Multi-line (use ^ for continuation):
+   docker run -d ^
+     --name youtube-sentiment ^
+     -p 8501:8501 ^
+     -e YOUTUBE_API_KEY=AIzaSyBvlqgKW9aFMKpaZK-jOc8KvF_cC8QbOdw ^
+     mrtweaker/youtube-sentiment-analysis:latest
+
+3. POWERSHELL - Single Line:
+   docker run -d --name youtube-sentiment -p 8501:8501 -e YOUTUBE_API_KEY=AIzaSyBvlqgKW9aFMKpaZK-jOc8KvF_cC8QbOdw mrtweaker/youtube-sentiment-analysis:latest
+
+4. POWERSHELL - Multi-line (use ` for continuation):
+   docker run -d `
+     --name youtube-sentiment `
+     -p 8501:8501 `
+     -e YOUTUBE_API_KEY=AIzaSyBvlqgKW9aFMKpaZK-jOc8KvF_cC8QbOdw `
+     mrtweaker/youtube-sentiment-analysis:latest
+
+After running, access the dashboard at: http://localhost:8501
+
+To stop: docker stop youtube-sentiment
+To start: docker start youtube-sentiment
+To remove: docker stop youtube-sentiment && docker rm youtube-sentiment

@@ -1,0 +1,2 @@
+# This file ensures the output directories are tracked in git
+# The actual output files are ignored via .gitignore

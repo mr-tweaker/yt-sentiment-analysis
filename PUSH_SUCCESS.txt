@@ -1,0 +1,10 @@
+🎉 Docker Image Successfully Pushed!
+
+Repository: mrtweaker/youtube-sentiment-analysis:latest
+Digest: sha256:3b4d03877c9445f5cd8166374c46c3d3e4dd145b1b5a9438802adf6489c9bd49
+Size: ~1.3GB
+
+Your friend can now use:
+  docker pull mrtweaker/youtube-sentiment-analysis:latest
+
+See WINDOWS_QUICK_START.md for complete instructions.

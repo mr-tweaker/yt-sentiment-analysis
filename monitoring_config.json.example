@@ -1,0 +1,10 @@
+{
+  "api_key": "YOUR_YOUTUBE_API_KEY_HERE",
+  "video_ids": [
+    "dQw4w9WgXcQ",
+    "jNQXAC9IVRw"
+  ],
+  "interval_minutes": 30,
+  "max_comments_per_video": 100,
+  "check_alerts": true
+}

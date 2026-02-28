@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+*.db
+*.sqlite
+output/figures/*
+output/reports/*
+!output/figures/.gitkeep
+!output/reports/.gitkeep
+
+# Data files (too large for Docker image)
+data/UScomments.csv
+data/additional_data/*.csv
+data/additional_data.zip
+
+# Jupyter notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local
+
+# Git
+.git/
+.gitignore
+
+# Documentation (optional - comment out if you want docs in image)
+*.md
+!README.md
+
+# Docker files themselves
+Dockerfile
+.dockerignore
+docker-compose.yml

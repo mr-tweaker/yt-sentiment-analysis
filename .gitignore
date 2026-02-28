@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter
+.ipynb_checkpoints
+
+# Data: ignore large files only (data/ folder and .gitkeep are tracked)
+data/*.csv
+data/*.zip
+data/additional_data/
+
+# Output and runtime
+output/
+*.db
+*.sqlite
+*.log
+monitoring_config.json
+
+# OS
+.DS_Store
+Thumbs.db

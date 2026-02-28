@@ -1,0 +1,18 @@
+pandas>=1.3.0
+numpy>=1.20.0
+matplotlib>=3.4.0
+seaborn>=0.11.0
+textblob>=0.17.0
+wordcloud>=1.9.0
+emoji>=2.2.0
+plotly>=5.0.0
+scipy>=1.7.0
+tqdm>=4.62.0
+
+# Optional but recommended
+scikit-learn>=1.0.0  # For topic modeling
+networkx>=2.6.0      # For network graphs
+streamlit>=1.0.0      # For interactive dashboard
+
+# Real-time monitoring
+google-api-python-client>=2.0.0  # For YouTube Data API v3
