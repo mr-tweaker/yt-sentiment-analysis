@@ -2,6 +2,18 @@
 
 A comprehensive Python project for analyzing sentiment of YouTube comments. This project uses NLP techniques to classify comments as positive, neutral, or negative, and provides extensive analysis features including topic modeling, engagement correlation, and interactive visualizations.
 
+## Docker (Quick Run)
+
+Pre-built image is available on **Docker Hub**:
+
+- **Image:** [mrtweaker/youtube-sentiment-analysis](https://hub.docker.com/r/mrtweaker/youtube-sentiment-analysis)
+- **Pull & run:**
+  ```bash
+  docker pull mrtweaker/youtube-sentiment-analysis:latest
+  docker run -d --name youtube-sentiment -p 8501:8501 -e YOUTUBE_API_KEY=your_key mrtweaker/youtube-sentiment-analysis:latest
+  ```
+- Open the dashboard at **http://localhost:8501**. See [DOCKER_README.md](DOCKER_README.md) and [WINDOWS_QUICK_START.md](WINDOWS_QUICK_START.md) for details.
+
 ## Overview
 
 This project provides:
