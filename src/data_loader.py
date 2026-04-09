@@ -168,8 +168,18 @@ def prepare_data(comments_df, video_df=None):
     # Merge with video metadata if available
     if video_df is not None and 'video_id' in df.columns and 'video_id' in video_df.columns:
         print("Merging comments with video metadata...")
+        desired_cols = ['video_id', 'category_name', 'category_id', 'channel_title']
+        merge_cols = [c for c in desired_cols if c in video_df.columns]
+        if merge_cols == ['video_id']:
+            df = df.merge(
+                video_df[['video_id']].drop_duplicates(),
+                on='video_id',
+                how='left'
+            )
+            print(f"Merged data: {len(df)} comments")
+            return df
         df = df.merge(
-            video_df[['video_id', 'category_name', 'channel_title']].drop_duplicates(),
+            video_df[merge_cols].drop_duplicates(),
             on='video_id',
             how='left'
         )

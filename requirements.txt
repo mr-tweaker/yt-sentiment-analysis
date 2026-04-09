@@ -16,3 +16,8 @@ streamlit>=1.0.0      # For interactive dashboard
 
 # Real-time monitoring
 google-api-python-client>=2.0.0  # For YouTube Data API v3
+
+# Optional language & transformer sentiment support
+langdetect>=1.0.9
+transformers>=4.38.0
+torch>=2.1.0

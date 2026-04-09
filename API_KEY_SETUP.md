@@ -1,72 +1,46 @@
-# API Key Configuration
+# API Key Configuration (YouTube Data API v3)
 
-## ✅ Preconfigured API Key
+## Recommended: environment variable
 
-Your YouTube API key has been preconfigured in the project:
+Set your key via `YOUTUBE_API_KEY` so it never lives in git history:
 
-**Location**: `src/config.py`
-**Key**: `AIzaSyBvlqgKW9aFMKpaZK-jOc8KvF_cC8QbOdw`
-
-## Automatic Usage
-
-The API key is automatically loaded when you run:
-
-1. **Monitoring Dashboard**:
-   ```bash
-   streamlit run monitoring_dashboard.py
-   ```
-   - Key is preloaded in the sidebar
-   - No need to enter it manually
-
-2. **Monitoring Service**:
-   ```bash
-   python monitor_service.py
-   ```
-   - Automatically uses the preconfigured key
-
-3. **Python Scripts**:
-   ```python
-   from src.youtube_monitor import YouTubeSentimentMonitor
-   
-   # No need to pass api_key - uses default
-   monitor = YouTubeSentimentMonitor()
-   ```
-
-## Override (Optional)
-
-You can still override the key if needed:
-
-**Environment Variable**:
 ```bash
-export YOUTUBE_API_KEY="different_key"
+export YOUTUBE_API_KEY="YOUR_YOUTUBE_API_KEY"
 ```
 
-**Command Line**:
-```bash
-python monitor_service.py --api-key "different_key"
-```
+The key will be used automatically by:
+- `monitoring_dashboard.py`
+- `monitor_service.py`
+- `src.youtube_monitor.YouTubeSentimentMonitor` (when `api_key` is not passed)
 
-**In Code**:
+## Alternative: pass explicitly
+
+In code:
+
 ```python
-monitor = YouTubeSentimentMonitor(api_key="different_key")
+from src.youtube_monitor import YouTubeSentimentMonitor
+
+monitor = YouTubeSentimentMonitor(api_key="YOUR_YOUTUBE_API_KEY")
 ```
 
-## Video Title Display
+## Getting a YouTube API key
 
-All monitoring interfaces now automatically:
-- ✅ Fetch video titles from YouTube API
-- ✅ Display titles instead of IDs
-- ✅ Cache video information for performance
-- ✅ Show video details (title, channel, views) everywhere
+1. Open Google Cloud Console
+2. Create/select a project
+3. Enable **YouTube Data API v3**
+4. Create an **API key** under Credentials
 
-**Example**: Instead of seeing `dQw4w9WgXcQ`, you'll see:
-- **Title**: "Rick Astley - Never Gonna Give You Up (Official Video)"
-- **Channel**: "RickAstleyVEVO"
-- **ID**: `dQw4w9WgXcQ` (shown as reference)
+## Key restrictions (strongly recommended)
 
-## Security Note
+In Google Cloud Console → Credentials → your API key:
+- **API restrictions**: restrict to **YouTube Data API v3**
+- **Application restrictions**:
+  - Local dev: usually **None** (or your current IP)
+  - Server: restrict by **server IP(s)**
 
-⚠️ The API key is stored in source code. For production:
-- Consider using environment variables
-- Add `src/config.py` to `.gitignore` if needed
-- Rotate keys periodically
+If you see errors like “Requests … are blocked”, it’s usually due to incorrect restrictions.
+
+## Security notes
+
+- **Never commit API keys** to source control.
+- This project redacts obvious secrets (like `key=...`) from dashboard error output, but you should still treat exposed keys as compromised and rotate them.

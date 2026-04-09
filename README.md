@@ -17,7 +17,7 @@ Pre-built image is available on **Docker Hub**:
 ## Overview
 
 This project provides:
-- **Sentiment Analysis**: TextBlob-based sentiment polarity analysis (−1 to 1)
+- **Sentiment Analysis**: Pluggable sentiment backends (TextBlob default; optional Transformers backend)
 - **Data Processing**: Automated data loading, cleaning, and preprocessing
 - **Advanced Features**: 17+ enhancement features including emoji analysis, topic modeling, network graphs, and more
 - **Visualizations**: Automated generation of charts, word clouds, and heatmaps
@@ -29,7 +29,9 @@ This project provides:
 - Python 3.8+
 - Pandas, NumPy
 - Seaborn, Matplotlib
-- TextBlob (for sentiment polarity)
+- TextBlob (default sentiment polarity)
+- Optional: Transformers + Torch (more accurate sentiment)
+- Optional: langdetect (language detection)
 - WordCloud (for visualization)
 
 ## Dataset
@@ -84,6 +86,20 @@ pip install -r requirements.txt
 python -m textblob.download_corpora
 ```
 
+4. **Set your YouTube API key** (for monitoring dashboard):
+
+```bash
+export YOUTUBE_API_KEY="YOUR_YOUTUBE_API_KEY"
+```
+
+Optional:
+
+```bash
+# Switch sentiment backend (default: textblob)
+export SENTIMENT_BACKEND=transformer
+export TRANSFORMER_MODEL_NAME=cardiffnlp/twitter-roberta-base-sentiment-latest
+```
+
 4. **Configure data paths**:
 
 Edit `src/config.py` and update the file paths to match your data location:
@@ -105,15 +121,19 @@ python main.py
 
 ### Running the Monitoring Dashboard
 
-The monitoring dashboard now includes:
-- ✅ **Preconfigured API Key** - Your API key is automatically loaded
-- ✅ **Video Title Display** - Shows video titles instead of IDs everywhere
+The monitoring dashboard includes:
+- ✅ **Video Browser**: fetch videos by channel ID/username/URL
+- ✅ **Top Comments feed**: newest/most-liked with filters (latest snapshot)
+- ✅ **Keyword & hashtag trends**: n-grams + time bucketing + snapshot vs published time basis
+- ✅ **Smarter alerts**: anomaly detection (z-score/EWMA) with explainer details + example comments
+- ✅ **Per-language sentiment**: language breakdown with full language names (when `langdetect` installed)
+- ✅ **API key redaction**: best-effort redaction of `key=...` in error output
 
 ```bash
 streamlit run monitoring_dashboard.py
 ```
 
-**Note**: Your YouTube API key is preconfigured in `src/config.py` and will be used automatically.
+**Note**: Don’t hardcode API keys in source. Use `YOUTUBE_API_KEY` env var.
 
 This will:
 1. Load and preprocess your data
@@ -230,8 +250,13 @@ After running the analysis, you'll find:
 
 ## Notes and Limitations
 
-- TextBlob uses a lexicon-based approach; results may be simplistic on sarcasm, slang, or domain-specific language.
-- For production-grade sentiment analysis, consider transformer-based models (e.g., fine-tuned BERT) and robust preprocessing.
+- TextBlob is lexicon-based; results may be simplistic on sarcasm, slang, or domain-specific language.
+- For improved accuracy, use the optional Transformers backend via `SENTIMENT_BACKEND=transformer`.
+
+## Security
+
+- **Never commit API keys**. Use environment variables.
+- The dashboard attempts to redact obvious secrets (like `key=...`) from error output, but you should still rotate exposed keys.
 
 ## Enhancement Ideas
 

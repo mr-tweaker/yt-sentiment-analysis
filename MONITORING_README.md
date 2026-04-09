@@ -6,10 +6,14 @@ This feature enables continuous monitoring of YouTube video comments and tracks 
 
 - ✅ **Real-time Comment Fetching**: Automatically fetches latest comments from YouTube videos
 - ✅ **Sentiment Tracking**: Monitors sentiment changes over time
-- ✅ **Alert System**: Configurable alerts for sentiment thresholds and changes
+- ✅ **Alert System**: Smarter alerts (z-score/EWMA anomalies) with explainer details and example comments
 - ✅ **Historical Data**: Stores all monitoring data in SQLite database
 - ✅ **Interactive Dashboard**: Streamlit dashboard for monitoring and visualization
 - ✅ **Scheduled Monitoring**: Background service for continuous monitoring
+- ✅ **Top Comments Feed**: DB-backed feed with filters (latest snapshot)
+- ✅ **Keyword & Hashtag Trends**: n-grams + time bucketing + time basis toggle
+- ✅ **Per-language Sentiment**: language detection (optional) + per-language breakdown
+- ✅ **Pluggable Sentiment Backend**: TextBlob (default) or Transformers (optional)
 
 ## Setup
 
@@ -187,12 +191,17 @@ Create `monitoring_config.json`:
 
 ## Alert System
 
-The monitoring system automatically checks for:
+The monitoring system supports both absolute thresholds and dynamic anomaly detection:
 
-1. **Negative Threshold**: Sentiment drops below -0.3
-2. **Positive Threshold**: Sentiment exceeds 0.5
-3. **Sentiment Drop**: Sentiment decreases by 0.2 or more
-4. **Sentiment Rise**: Sentiment increases by 0.2 or more
+1. **Absolute thresholds** (optional):
+   - Negative threshold (default: -0.3)
+   - Positive threshold (default: 0.5)
+2. **Anomaly detection**:
+   - z-score anomalies based on recent baseline
+   - EWMA anomalies (moving baseline)
+   - volatility-aware “big move” alerts (Δ vs σ)
+
+Alerts store structured JSON details and example comments to explain *why* an alert fired.
 
 ### Custom Alert Thresholds
 
@@ -200,10 +209,17 @@ You can customize thresholds when checking alerts:
 
 ```python
 thresholds = {
+    # absolute thresholds (optional)
     'negative_threshold': -0.3,
     'positive_threshold': 0.5,
-    'drop_threshold': 0.2,
-    'rise_threshold': 0.2
+
+    # anomaly detection
+    'lookback_points': 20,
+    'min_points': 6,
+    'zscore_threshold': 2.5,
+    'ewma_alpha': 0.3,
+    'ewma_sigma': 2.5,
+    'change_sigma': 2.5
 }
 
 alerts = monitor.check_sentiment_alerts(video_id, current_sentiment, thresholds)
@@ -214,8 +230,8 @@ alerts = monitor.check_sentiment_alerts(video_id, current_sentiment, thresholds)
 Monitoring data is stored in `output/monitoring.db` with three tables:
 
 1. **video_sentiment_history**: Historical sentiment metrics per video
-2. **comment_snapshots**: Individual comment snapshots with sentiment
-3. **alerts**: Alert history
+2. **comment_snapshots**: Individual comment snapshots with sentiment (includes `published_at`, `parent_id`, `language`)
+3. **alerts**: Alert history (includes `details` JSON)
 
 ### Query Examples
 
@@ -353,3 +369,4 @@ history = monitor.get_sentiment_history("video_id", hours=24)
 - Use environment variables or secure config files
 - Add `monitoring_config.json` to `.gitignore`
 - Rotate API keys periodically
+- The dashboard attempts to redact obvious secrets like `key=...` from error output, but you should still treat exposed keys as compromised.

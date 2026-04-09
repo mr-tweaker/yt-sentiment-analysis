@@ -13,9 +13,29 @@ from datetime import datetime, timedelta
 import sys
 from pathlib import Path
 import gc  # Garbage collection for memory management
+import json
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent))
+
+def _redact_secrets(text: object) -> str:
+    """
+    Redact obvious secrets from error messages before displaying them.
+    This dashboard may receive HttpError strings that include full request URLs
+    with `key=...` query params; never surface those verbatim.
+    """
+    try:
+        s = str(text)
+    except Exception:
+        return "<unprintable>"
+
+    import re
+
+    # Redact YouTube/Google API key query param
+    s = re.sub(r"([?&]key=)[^&\s]+", r"\1<redacted>", s)
+    # Generic bearer-style tokens
+    s = re.sub(r"(?i)(authorization:\s*bearer\s+)[^\s]+", r"\1<redacted>", s)
+    return s
 
 try:
     from src.youtube_monitor import YouTubeSentimentMonitor
@@ -23,7 +43,7 @@ try:
     MONITOR_AVAILABLE = True
 except ImportError as e:
     MONITOR_AVAILABLE = False
-    st.error(f"Monitoring module not available: {e}")
+    st.error(f"Monitoring module not available: {_redact_secrets(e)}")
 
 
 def extract_video_id(input_str: str) -> str:
@@ -120,7 +140,7 @@ def get_monitor(api_key):
     try:
         return YouTubeSentimentMonitor(api_key=api_key)
     except Exception as e:
-        st.error(f"Error initializing monitor: {e}")
+        st.error(f"Error initializing monitor: {_redact_secrets(e)}")
         return None
 
 def main():
@@ -207,7 +227,7 @@ def main():
                                     else:
                                         st.warning("No videos found. Check channel ID/username.")
                                 except Exception as e:
-                                    st.error(f"Error: {e}")
+                                    st.error(f"Error: {_redact_secrets(e)}")
                         else:
                             st.warning("Please enter a channel ID, username, or URL")
                 
@@ -400,7 +420,7 @@ def main():
                         else:
                             st.warning("No videos found. Check channel ID/username.")
                     except Exception as e:
-                        st.error(f"Error fetching videos: {e}")
+                        st.error(f"Error fetching videos: {_redact_secrets(e)}")
             else:
                 st.warning("Please enter a channel ID or username")
         
@@ -731,6 +751,164 @@ def main():
                 
                 with col4:
                     st.metric("Negative", f"{negative_pct:.1f}%")
+
+                st.divider()
+                st.subheader("💬 Top Comments (latest snapshot)")
+
+                colf1, colf2, colf3, colf4 = st.columns([1.2, 1.2, 1, 1.6])
+                with colf1:
+                    order_by = st.selectbox(
+                        "Sort",
+                        options=[("most_liked", "Most liked"), ("newest", "Newest")],
+                        format_func=lambda x: x[1],
+                        index=0,
+                        key="top_comments_sort",
+                    )[0]
+                with colf2:
+                    sentiment_filter = st.selectbox(
+                        "Sentiment",
+                        options=[("all", "All"), ("positive", "Positive"), ("neutral", "Neutral"), ("negative", "Negative")],
+                        format_func=lambda x: x[1],
+                        index=0,
+                        key="top_comments_sentiment",
+                    )[0]
+                with colf3:
+                    min_likes = st.number_input("Min likes", min_value=0, max_value=100000, value=0, step=1, key="top_comments_min_likes")
+                with colf4:
+                    keyword = st.text_input("Keyword", value="", placeholder="search in comment text", key="top_comments_keyword")
+
+                limit = st.slider("Max comments to show", min_value=10, max_value=200, value=50, step=10, key="top_comments_limit")
+
+                try:
+                    top_df = monitor.get_latest_comments_snapshot(
+                        selected_video,
+                        limit=int(limit),
+                        order_by=order_by,
+                        sentiment_filter=sentiment_filter,
+                        keyword=keyword,
+                        min_likes=int(min_likes),
+                    )
+                except Exception as e:
+                    st.error(f"Failed to load comments snapshot: {_redact_secrets(e)}")
+                    top_df = pd.DataFrame()
+
+                if top_df.empty:
+                    st.info("No snapshot comments found yet. Click **Refresh Now** to fetch and analyze comments.")
+                else:
+                    # Compact rendering
+                    for _, row in top_df.iterrows():
+                        bucket = str(row.get("sentiment_bucket", "neutral"))
+                        s = row.get("sentiment", None)
+                        likes = int(row.get("like_count", 0) or 0)
+                        author = str(row.get("author", ""))
+                        published_at = str(row.get("published_at", "") or "")
+                        text = str(row.get("comment_text", "") or "")
+
+                        if bucket == "positive":
+                            border = "#2ca02c"
+                            bg = "#e8f5e9"
+                        elif bucket == "negative":
+                            border = "#d62728"
+                            bg = "#ffebee"
+                        else:
+                            border = "#6c757d"
+                            bg = "#f1f3f5"
+
+                        score_str = f"{float(s):.3f}" if s is not None and pd.notna(s) else "N/A"
+                        meta = f"{author} • 👍 {likes}"
+                        if published_at:
+                            meta = f"{meta} • {published_at[:19].replace('T', ' ')}"
+
+                        st.markdown(
+                            f"""
+                            <div style="background-color: {bg}; padding: 10px; margin: 6px 0; border-radius: 6px; border-left: 4px solid {border};">
+                              <div style="font-weight: 700;">[{bucket}] Polarity: {score_str}</div>
+                              <div style="color: #333; margin-top: 4px;">{text[:400]}{'...' if len(text) > 400 else ''}</div>
+                              <div style="color: #555; font-size: 0.85rem; margin-top: 6px;">{meta}</div>
+                            </div>
+                            """,
+                            unsafe_allow_html=True,
+                        )
+
+                    # Per-language sentiment summary from latest snapshot
+                    lang_df = monitor.get_latest_comments_snapshot(
+                        selected_video,
+                        limit=5000,
+                        order_by="most_liked",
+                        sentiment_filter="all",
+                        keyword="",
+                        min_likes=0,
+                    )
+                    if not lang_df.empty and "language" in lang_df.columns:
+                        lang_stats = (
+                            lang_df.groupby("language")
+                            .agg(
+                                count=("comment_id", "count"),
+                                avg_sentiment=("sentiment", "mean"),
+                            )
+                            .reset_index()
+                            .sort_values("count", ascending=False)
+                        )
+
+                        # Map ISO codes to human-friendly names (fallback to code)
+                        iso_map = {
+                            "en": "English",
+                            "de": "German",
+                            "fr": "French",
+                            "es": "Spanish",
+                            "it": "Italian",
+                            "pt": "Portuguese",
+                            "ru": "Russian",
+                            "ja": "Japanese",
+                            "ko": "Korean",
+                            "hi": "Hindi",
+                            "id": "Indonesian",
+                            "pl": "Polish",
+                            "ro": "Romanian",
+                            "nl": "Dutch",
+                            "tr": "Turkish",
+                            "sv": "Swedish",
+                            "fi": "Finnish",
+                            "da": "Danish",
+                            "no": "Norwegian",
+                            "cs": "Czech",
+                            "bg": "Bulgarian",
+                            "hr": "Croatian",
+                            "el": "Greek",
+                            "uk": "Ukrainian",
+                            "ar": "Arabic",
+                            "fa": "Persian",
+                            "he": "Hebrew",
+                            "th": "Thai",
+                            "vi": "Vietnamese",
+                            "zh-cn": "Chinese (Simplified)",
+                            "zh-tw": "Chinese (Traditional)",
+                            "unknown": "Unknown",
+                        }
+
+                        lang_stats["language_name"] = lang_stats["language"].astype(str).map(
+                            lambda c: iso_map.get(c.lower(), c)
+                        )
+                        st.subheader("🌍 Per-language Sentiment (latest snapshot)")
+                        col_l1, col_l2 = st.columns([2, 1])
+                        with col_l1:
+                            fig_lang = px.bar(
+                                lang_stats,
+                                x="language_name",
+                                y="avg_sentiment",
+                                hover_data=["count"],
+                                title="Average sentiment by language",
+                            )
+                            fig_lang.update_layout(height=320)
+                            st.plotly_chart(fig_lang, width="stretch")
+                            del fig_lang
+                            gc.collect()
+                        with col_l2:
+                            st.dataframe(
+                                lang_stats[["language_name", "language", "count", "avg_sentiment"]],
+                                width="stretch",
+                                hide_index=True,
+                            )
                 
                 # Ensure numeric types for plotting (create a copy to avoid modifying original)
                 history_plot = history.copy()
@@ -907,6 +1085,75 @@ def main():
                 )
             else:
                 st.info("No historical data available")
+
+            st.divider()
+            st.subheader("🔎 Keyword & Hashtag Trends")
+
+            colk1, colk2, colk3, colk4, colk5 = st.columns([1, 1, 1, 1, 1.2])
+            with colk1:
+                trend_hours = st.slider("Window (hours)", 1, 168, min(24, int(hours)), key="trend_hours")
+            with colk2:
+                top_n = st.number_input("Top terms", min_value=3, max_value=30, value=10, step=1, key="trend_top_n")
+            with colk3:
+                ngram = st.selectbox("N-gram", options=[1, 2, 3], index=0, key="trend_ngram")
+            with colk4:
+                bucket_minutes = st.selectbox("Bucket", options=[5, 15, 30, 60, 120, 240], index=3, key="trend_bucket")
+            with colk5:
+                include_hashtags = st.checkbox("Include hashtags", value=True, key="trend_hashtags")
+
+            time_basis = st.radio(
+                "Time basis",
+                options=[("snapshot", "Snapshot time (when you refreshed)"), ("published", "Comment published time")],
+                format_func=lambda x: x[1],
+                horizontal=True,
+                index=0,
+                key="trend_time_basis",
+            )[0]
+
+            min_term_count = st.number_input("Min total count", min_value=1, max_value=50, value=2, step=1, key="trend_min_count")
+
+            try:
+                trend = monitor.get_keyword_trends(
+                    selected_video,
+                    hours=int(trend_hours),
+                    top_n=int(top_n),
+                    ngram=int(ngram),
+                    include_hashtags=bool(include_hashtags),
+                    bucket_minutes=int(bucket_minutes),
+                    min_term_count=int(min_term_count),
+                    time_basis=time_basis,
+                )
+                top_terms_df = trend.get("top_terms", pd.DataFrame())
+                ts_df = trend.get("timeseries", pd.DataFrame())
+            except Exception as e:
+                st.error(f"Failed to compute trends: {_redact_secrets(e)}")
+                top_terms_df = pd.DataFrame()
+                ts_df = pd.DataFrame()
+
+            if top_terms_df.empty or ts_df.empty:
+                st.info("No trends yet. Click **Refresh Now** a few times over time to build snapshots, then come back here.")
+            else:
+                # Line chart: term frequency over time (bucketed)
+                fig = px.line(
+                    ts_df,
+                    x="timestamp",
+                    y="count",
+                    color="term",
+                    markers=True,
+                    title="Top terms over time (counts per bucket)",
+                )
+                fig.update_layout(height=420, hovermode="x unified", legend_title_text="Term")
+                st.plotly_chart(fig, width="stretch")
+                del fig
+                gc.collect()
+
+                col_tbl1, col_tbl2 = st.columns([1, 1])
+                with col_tbl1:
+                    st.markdown("**Top terms (total in window)**")
+                    st.dataframe(top_terms_df, width="stretch", hide_index=True)
+                with col_tbl2:
+                    st.markdown("**Raw time series (bucketed)**")
+                    st.dataframe(ts_df.sort_values(["timestamp", "count"], ascending=[False, False]), width="stretch", hide_index=True)
     
     # Tab 4: Alerts
     with tab4:
@@ -927,13 +1174,53 @@ def main():
                 video_title = video_info['title'] if video_info else alert['video_id']
                 
                 alert_class = "alert-negative" if alert['current_value'] < 0 else "alert-positive"
-                st.markdown(f"""
-                <div class="alert-box {alert_class}">
-                    <strong>{alert['alert_type']}</strong> - {video_title}<br>
-                    {alert['message']}<br>
-                    <small>Video ID: {alert['video_id']} | {alert['timestamp']}</small>
-                </div>
-                """, unsafe_allow_html=True)
+                alert_type = str(alert.get("alert_type", "alert"))
+                msg = _redact_secrets(alert.get("message", ""))
+                ts = str(alert.get("timestamp", ""))
+                vid = str(alert.get("video_id", ""))
+
+                # Parse details JSON (if present)
+                details_raw = alert.get("details", None)
+                details = None
+                if details_raw is not None and str(details_raw).strip():
+                    try:
+                        details = json.loads(str(details_raw))
+                    except Exception:
+                        details = {"raw": _redact_secrets(details_raw)}
+
+                header = f"{alert_type} — {video_title}"
+                with st.expander(header, expanded=False):
+                    st.markdown(f"""
+                    <div class="alert-box {alert_class}">
+                        <strong>{alert_type}</strong> - {video_title}<br>
+                        {msg}<br>
+                        <small>Video ID: {vid} | {ts}</small>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                    if details:
+                        reason = details.get("reason")
+                        if reason:
+                            st.caption(f"**Reason:** `{reason}`")
+
+                        # Show key numeric fields if present
+                        numeric_keys = ["z", "value", "mean", "std", "ewma_mean", "ewma_std", "delta", "sigma", "alpha"]
+                        present = {k: details.get(k) for k in numeric_keys if details.get(k) is not None}
+                        if present:
+                            st.markdown("**Signals**")
+                            st.json(present)
+
+                        examples = details.get("examples") or []
+                        if isinstance(examples, list) and examples:
+                            st.markdown("**Example comments**")
+                            for ex in examples[:5]:
+                                st.markdown(f"- {_redact_secrets(ex)}")
+
+                        if "raw" in details:
+                            st.markdown("**Details (raw)**")
+                            st.code(str(details["raw"]))
+                    else:
+                        st.caption("No structured details available for this alert.")
             
             # Alerts table
             st.subheader("Alerts Table")
@@ -1135,9 +1422,9 @@ def main():
                     else:
                         st.error(f"❌ {result.get('status', 'Unknown error')}")
                 except Exception as e:
-                    st.error(f"Error: {e}")
+                    st.error(f"Error: {_redact_secrets(e)}")
                     import traceback
-                    st.code(traceback.format_exc())
+                    st.code(_redact_secrets(traceback.format_exc()))
 
 if __name__ == "__main__":
     main()

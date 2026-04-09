@@ -1,115 +1,57 @@
-# Changes Summary - API Key & Video Title Display
+# Changes Summary
 
-## ✅ Implemented Changes
+This document summarizes the major improvements added after the initial monitoring dashboard work.
 
-### 1. Preconfigured API Key
+## ✅ Security + API key handling
 
-**Location**: `src/config.py`
-- Added `DEFAULT_YOUTUBE_API_KEY = "AIzaSyBvlqgKW9aFMKpaZK-jOc8KvF_cC8QbOdw"`
-- Automatically used by all monitoring components
+- Removed “preconfigured API key” guidance from docs (never store keys in source control).
+- Added best-effort redaction of `key=...` in error messages so API keys don’t get printed in UI/terminal logs.
 
-**Files Updated**:
-- `src/config.py` - Added default API key constant
-- `src/youtube_monitor.py` - Uses default key if none provided
-- `monitor_service.py` - Uses default key automatically
-- `monitoring_dashboard.py` - Preloads default key in UI
+## ✅ Data pipeline robustness
 
-### 2. Video Title Display
+- `src/data_loader.prepare_data()` now merges video metadata using only the columns that exist (prevents crashes when `category_name` is absent).
 
-**Features Added**:
-- ✅ Video information fetching from YouTube API
-- ✅ Video title caching in database
-- ✅ Title display in all monitoring interfaces
-- ✅ Channel name and video details shown
+## ✅ Monitoring dashboard upgrades
 
-**Files Updated**:
-- `src/youtube_monitor.py`:
-  - Added `get_video_info()` method
-  - Added `cache_video_info()` method
-  - Added `get_cached_video_info()` method
-  - Added `get_video_title()` method
-  - Added `video_info_cache` database table
-  - Updated `add_video()` to cache video info
-  - Updated `monitor_video()` to show titles in logs
+### Top Comments feed (latest snapshot)
 
-- `monitoring_dashboard.py`:
-  - Video selection dropdowns show titles
-  - Video list shows titles with channel info
-  - Alerts show video titles
-  - Manual check shows video info
-  - All tabs display video titles
+- Added a DB-backed “Top Comments” feed with filters:
+  - sort by **Most liked** / **Newest**
+  - sentiment bucket filter
+  - keyword search
+  - min likes threshold
 
-- `monitor_service.py`:
-  - Summary output shows video titles
-  - Monitoring logs include video titles
+### Keyword & hashtag trends (over time)
 
-## Usage Examples
+- Added keyword/hashtag extraction from snapshots with:
+  - n-grams (1/2/3)
+  - configurable time bucket
+  - time basis toggle:
+    - **Snapshot time** (when you refreshed)
+    - **Comment published time** (fallbacks safely if missing)
 
-### Automatic API Key Usage
+### Smarter alerts (anomaly detection)
 
-```python
-# No need to pass API key - uses default
-from src.youtube_monitor import YouTubeSentimentMonitor
+- Alerting now supports:
+  - z-score anomaly
+  - EWMA anomaly
+  - volatility-aware “big move”
+- Alerts store structured JSON in `alerts.details` including baseline stats and example comments.
+- Alerts tab renders `details` in an expandable UI.
 
-monitor = YouTubeSentimentMonitor()
-# API key automatically loaded from config
-```
+### Per-language sentiment
 
-### Video Title Display
+- Adds comment language detection (when `langdetect` is installed).
+- Live Monitoring shows per-language count and average sentiment with full language names.
 
-```python
-# Add video - title automatically fetched and displayed
-monitor.add_video('dQw4w9WgXcQ')
-# Output: "Added video: Rick Astley - Never Gonna Give You Up (Official Video) (dQw4w9WgXcQ)"
+### Sentiment model backend switch (optional)
 
-# Get video title
-title = monitor.get_video_title('dQw4w9WgXcQ')
-# Returns: "Rick Astley - Never Gonna Give You Up (Official Video) (4K Remaster)"
-```
+- `SENTIMENT_BACKEND=textblob` (default, fast)
+- `SENTIMENT_BACKEND=transformer` (optional, more accurate; requires `transformers` + `torch`)
+- Caching added to avoid rescoring repeated comments.
 
-### Dashboard Display
+## ✅ Environment variables
 
-In the monitoring dashboard, you'll see:
-- **Video List**: Shows titles like "Rick Astley - Never Gonna Give You Up..." instead of just IDs
-- **Video Selection**: Dropdowns show "Video Title (video_id)" format
-- **Alerts**: Show video titles in alert messages
-- **History**: Video titles in all historical views
-
-## Testing
-
-All features tested and working:
-- ✅ API key preloading
-- ✅ Video title fetching
-- ✅ Video info caching
-- ✅ Title display in dashboard
-- ✅ Title display in service logs
-
-## Next Steps
-
-1. **Run Monitoring Dashboard**:
-   ```bash
-   streamlit run monitoring_dashboard.py
-   ```
-   - API key is preloaded
-   - Add videos and see titles automatically
-
-2. **Run Monitoring Service**:
-   ```bash
-   python monitor_service.py --videos dQw4w9WgXcQ
-   ```
-   - Service will show video titles in output
-
-3. **Use in Python**:
-   ```python
-   from src.youtube_monitor import YouTubeSentimentMonitor
-   
-   monitor = YouTubeSentimentMonitor()  # Uses default key
-   monitor.add_video('video_id')  # Title automatically fetched
-   ```
-
-## Notes
-
-- Video information is cached in `output/monitoring.db` for performance
-- Titles are fetched once and reused
-- If video info can't be fetched, falls back to showing video ID
-- API key can still be overridden via environment variable or parameter
+- `YOUTUBE_API_KEY`: YouTube Data API v3 key
+- `SENTIMENT_BACKEND`: `textblob` (default) or `transformer`
+- `TRANSFORMER_MODEL_NAME`: optional Hugging Face model id

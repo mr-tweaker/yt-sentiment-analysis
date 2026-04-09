@@ -1,11 +1,12 @@
 # Quick Start Guide
 
-## Preconfigured API Key
+## YouTube API key
 
-Your YouTube API key has been preconfigured in `src/config.py`. It will be automatically used when running:
-- `monitoring_dashboard.py`
-- `monitor_service.py`
-- Any Python scripts using `YouTubeSentimentMonitor`
+Set your YouTube Data API v3 key via environment variable:
+
+```bash
+export YOUTUBE_API_KEY="YOUR_YOUTUBE_API_KEY"
+```
 
 ## Running the Monitoring Dashboard
 
@@ -14,10 +15,13 @@ streamlit run monitoring_dashboard.py
 ```
 
 The dashboard will:
-- ✅ Automatically use your preconfigured API key
 - ✅ Display video titles instead of IDs for easier identification
 - ✅ Cache video information for faster loading
 - ✅ Show video details (title, channel, views) in all views
+- ✅ Show a “Top Comments” feed with filters
+- ✅ Show keyword/hashtag trends over time
+- ✅ Show anomaly-based alerts with explainer details
+- ✅ Show per-language sentiment (latest snapshot)
 
 ## Running the Monitoring Service
 
@@ -51,7 +55,6 @@ Video information is automatically fetched and cached when you add a video to mo
 
 ## API Key Security
 
-⚠️ **Note**: The API key is stored in `src/config.py`. For production use, consider:
-- Using environment variables instead
-- Adding `src/config.py` to `.gitignore` if committing to a public repository
-- Rotating the key periodically
+⚠️ **Never commit API keys.**
+
+Use environment variables and rotate keys if they’re ever exposed.

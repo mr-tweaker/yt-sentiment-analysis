@@ -43,3 +43,12 @@ DB_NAME = "youtube_sentiment_analysis.db"
 # YouTube API Configuration
 # Set via environment variable YOUTUBE_API_KEY or in dashboard UI
 DEFAULT_YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY", "")
+
+# Sentiment model configuration
+# SENTIMENT_BACKEND: "textblob" (default, fast) or "transformer" (slower, more accurate)
+SENTIMENT_BACKEND = os.getenv("SENTIMENT_BACKEND", "textblob").lower()
+# Hugging Face model name to use when SENTIMENT_BACKEND == "transformer"
+TRANSFORMER_MODEL_NAME = os.getenv(
+    "TRANSFORMER_MODEL_NAME",
+    "cardiffnlp/twitter-roberta-base-sentiment-latest",
+)
