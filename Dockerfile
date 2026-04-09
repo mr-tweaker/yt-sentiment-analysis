@@ -12,9 +12,17 @@ RUN apt-get update && apt-get install -y \
 
 # Copy requirements first for better caching
 COPY requirements.txt .
+COPY requirements-ml.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Optional: install ML dependencies (transformers/langdetect + CPU-only torch)
+ARG INCLUDE_ML=0
+RUN if [ "$INCLUDE_ML" = "1" ]; then \
+      pip install --no-cache-dir -r requirements-ml.txt && \
+      pip install --no-cache-dir --index-url https://download.pytorch.org/whl/cpu torch ; \
+    fi
 
 # Copy the entire project
 COPY . .

@@ -14,6 +14,15 @@ Pre-built image is available on **Docker Hub**:
   ```
 - Open the dashboard at **http://localhost:8501**. See [DOCKER_README.md](DOCKER_README.md) and [WINDOWS_QUICK_START.md](WINDOWS_QUICK_START.md) for details.
 
+**ML-enabled image (optional)**:
+
+The default Docker image is kept lightweight and does **not** include `torch/transformers`.
+If you want an ML-enabled image, build locally with:
+
+```bash
+docker build --build-arg INCLUDE_ML=1 -t mrtweaker/youtube-sentiment-analysis:ml .
+```
+
 ## Overview
 
 This project provides:
@@ -84,6 +93,12 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 ```bash
 pip install -r requirements.txt
 python -m textblob.download_corpora
+```
+
+Optional (language detection + transformer sentiment backend):
+
+```bash
+pip install -r requirements-ml.txt
 ```
 
 4. **Set your YouTube API key** (for monitoring dashboard):

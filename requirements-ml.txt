@@ -1,0 +1,7 @@
+## Optional ML dependencies (large)
+## Install only if you want language detection + transformer sentiment backend.
+langdetect>=1.0.9
+transformers>=4.38.0
+
+## Prefer CPU-only PyTorch inside Docker to avoid CUDA bloat.
+## For Docker builds, the Dockerfile installs torch from the CPU index URL.

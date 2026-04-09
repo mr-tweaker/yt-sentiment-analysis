@@ -12,6 +12,7 @@ build/
 venv/
 env/
 ENV/
+.venv/
 
 # IDE
 .vscode/
@@ -31,11 +32,23 @@ output/figures/*
 output/reports/*
 !output/figures/.gitkeep
 !output/reports/.gitkeep
+output/
 
 # Data files (too large for Docker image)
 data/UScomments.csv
 data/additional_data/*.csv
 data/additional_data.zip
+data/
+
+# Large local artifacts
+assets/
+.cursor/
+agent-transcripts/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
 
 # Jupyter notebooks
 *.ipynb
