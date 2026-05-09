@@ -22,6 +22,12 @@ docker build -t your-registry/youtube-sentiment-analysis:latest .
 # - Other registries: registry.example.com/youtube-sentiment-analysis:latest
 ```
 
+**Optional ML layer (Transformers + PyTorch)** — larger image; build locally when you need `SENTIMENT_BACKEND=transformer` inside the container:
+
+```bash
+docker build --build-arg INCLUDE_ML=1 -t your-registry/youtube-sentiment-analysis:ml .
+```
+
 ### 2. Test the Image Locally
 
 ```bash

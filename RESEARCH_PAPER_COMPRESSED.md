@@ -93,7 +93,7 @@ Impact score combines sentiment with engagement: `impact_score = |polarity| × l
 
 **Video Browser:** Channel input (ID/username/URL), fetches N videos, search by title, "Add to Monitoring" and "Analyze Now" buttons with custom comment limits.
 
-**Live Monitoring:** Video selector (titles not IDs), refresh button, trend visualization (stacked area/bar charts), metric cards, sample comments.
+**Live Monitoring:** Latest snapshot per monitored video via `get_latest_snapshot_full()`—sentiment distribution, category pie/bar when metadata exists, summary statistics, Top Comments filters, per-language breakdown, sample comments, plus time-series when multi-point history exists; refresh fetches new comments into SQLite.
 
 **Sentiment History:** Date range selection, trend charts, statistical tables, CSV export.
 

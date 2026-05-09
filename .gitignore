@@ -41,3 +41,6 @@ monitoring_config.json
 # OS
 .DS_Store
 Thumbs.db
+
+# Local / personal assets not part of the app
+Reserach Paper/

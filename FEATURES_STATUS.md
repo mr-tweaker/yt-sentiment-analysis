@@ -71,13 +71,11 @@ The Streamlit dashboard (`dashboard.py`) includes:
 - ✅ Category and channel analysis
 - ✅ Advanced features integration
 
-### Features Requiring External Setup
+### External setup for monitoring
 
-- **Real-time Monitoring (#18)**: Would require:
-  - YouTube Data API v3 credentials
-  - API key setup
-  - Scheduling infrastructure (cron, Celery, etc.)
-  - Real-time data pipeline
+- **Real-time Monitoring (#18)** is implemented in-repo (`monitoring_dashboard.py`, `monitor_service.py`, `src/youtube_monitor.py`). You only need:
+  - A **YouTube Data API v3** key (`YOUTUBE_API_KEY`)
+  - Optional **scheduled** runs via OS cron/Task Scheduler, or the bundled `monitor_service.py` loop, if you want checks without keeping the Streamlit UI open
 
 ## 🚀 Usage
 

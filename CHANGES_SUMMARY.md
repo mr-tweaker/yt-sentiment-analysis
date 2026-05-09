@@ -50,6 +50,10 @@ This document summarizes the major improvements added after the initial monitori
 - `SENTIMENT_BACKEND=transformer` (optional, more accurate; requires `transformers` + `torch`)
 - Caching added to avoid rescoring repeated comments.
 
+### Live Monitoring — full snapshot analytics
+
+- **Live Monitoring** uses `get_latest_snapshot_full()` so one tab shows the same *depth* as a Video Browser-style analysis: sentiment histogram, category pie/bar (when `category_id` / `category_name` are present in stored snapshots), summary stats, most positive/negative samples, Top Comments filters, and per-language sentiment—all from the latest SQLite snapshot. Time-series blocks still need enough history (e.g. refreshes over time).
+
 ## ✅ Environment variables
 
 - `YOUTUBE_API_KEY`: YouTube Data API v3 key

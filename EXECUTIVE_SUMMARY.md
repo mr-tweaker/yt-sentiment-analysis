@@ -32,6 +32,7 @@ A comprehensive sentiment analysis system that evolved from a basic Jupyter note
 
 ### 4. **Interactive Dashboard**
 - 5 functional tabs (Video Browser, Live Monitoring, History, Alerts, Manual Check)
+- Live Monitoring: full latest-snapshot analytics (distribution, categories, stats, samples, languages) plus trends when history exists
 - Real-time updates with refresh capability
 - Comprehensive visualizations (10+ chart types)
 - User-friendly interface with video titles

@@ -910,6 +910,58 @@ class YouTubeSentimentMonitor:
         finally:
             conn.close()
 
+    def get_latest_snapshot_full(self, video_id: str) -> pd.DataFrame:
+        """
+        All comments from the most recent snapshot for a video (no filters, no limit).
+
+        Used for dashboards that need full distributions (histograms, category counts).
+        """
+        conn = sqlite3.connect(self.monitoring_db)
+        try:
+            cursor = conn.cursor()
+            cursor.execute(
+                "SELECT MAX(timestamp) FROM comment_snapshots WHERE video_id = ?",
+                (video_id,),
+            )
+            latest_ts = cursor.fetchone()[0]
+            if not latest_ts:
+                return pd.DataFrame()
+
+            df = pd.read_sql_query(
+                """
+                SELECT
+                    video_id,
+                    comment_id,
+                    timestamp,
+                    published_at,
+                    parent_id,
+                    author,
+                    like_count,
+                    language,
+                    comment_text,
+                    sentiment
+                FROM comment_snapshots
+                WHERE video_id = ? AND timestamp = ?
+                """,
+                conn,
+                params=(video_id, latest_ts),
+            )
+            if df.empty:
+                return df
+
+            df["like_count"] = pd.to_numeric(df.get("like_count"), errors="coerce").fillna(0).astype(int)
+            df["sentiment"] = pd.to_numeric(df.get("sentiment"), errors="coerce")
+            pos_thr = 0.1
+            neg_thr = -0.1
+            df["sentiment_bucket"] = np.where(
+                df["sentiment"] > pos_thr,
+                "positive",
+                np.where(df["sentiment"] < neg_thr, "negative", "neutral"),
+            )
+            return df.reset_index(drop=True)
+        finally:
+            conn.close()
+
     def get_keyword_trends(
         self,
         video_id: str,

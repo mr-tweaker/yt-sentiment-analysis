@@ -30,8 +30,9 @@ with configurable limits, and expandable video cards with analysis options.
 
 **Caption:**
 ```
-Fig. 3. Live Monitoring tab displaying real-time sentiment trends, metric 
-cards, and color-coded sample comments with refresh functionality.
+Fig. 3. Live Monitoring tab: latest-snapshot distribution, category charts (if 
+available), stats, Top Comments, per-language view, samples, and trend charts when 
+history exists; refresh updates SQLite.
 ```
 
 ---
@@ -111,7 +112,7 @@ Fig. 1. System architecture showing four layers: Presentation (Streamlit dashboa
 
 Fig. 2. Video Browser tab interface showing channel input, video fetching with configurable limits, and expandable video cards with analysis options.
 
-Fig. 3. Live Monitoring tab displaying real-time sentiment trends, metric cards, and color-coded sample comments with refresh functionality.
+Fig. 3. Live Monitoring tab: latest-snapshot distribution, category charts (if available), stats, Top Comments, per-language view, samples, and trend charts when history exists; refresh updates SQLite.
 
 Fig. 4. Manual Check analysis results showing sentiment distribution histogram, category pie chart, word cloud, sample comments, and statistics table.
 

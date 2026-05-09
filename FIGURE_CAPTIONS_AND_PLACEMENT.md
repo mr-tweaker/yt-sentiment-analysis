@@ -73,21 +73,16 @@ expandable video cards with analysis options.
 
 **Caption:**
 ```
-Fig. 3. Live Monitoring tab displaying real-time sentiment analysis results. 
-The interface shows a video selector dropdown populated with monitored videos 
-(displaying titles instead of IDs), a refresh button for fetching latest 
-comments, sentiment trend visualization (stacked area chart or bar chart 
-depending on data points), metric cards displaying current sentiment statistics 
-(total comments, average sentiment, category breakdown), and a sample comments 
-section with color-coded sentiment indicators (green for positive, red for 
-negative). The refresh functionality enables continuous monitoring with 
-sub-second update latency.
+Fig. 3. Live Monitoring tab displaying the latest snapshot analytics per monitored 
+video: sentiment distribution, optional category pie/bar charts, summary statistics, 
+Top Comments filters, per-language breakdown, color-coded sample comments, and—when 
+history exists—time-series trend charts; refresh persists new comments to SQLite.
 ```
 
 **Shorter version:**
 ```
-Fig. 3. Live Monitoring tab with video selector, sentiment trend charts, metric 
-cards, and sample comments with real-time refresh capability.
+Fig. 3. Live Monitoring tab with full snapshot charts (distribution, categories, 
+stats, samples, languages), optional trend charts, and refresh.
 ```
 
 ---

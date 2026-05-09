@@ -9,6 +9,12 @@
 docker build -t your-registry/youtube-sentiment-analysis:latest .
 ```
 
+**Optional:** include PyTorch + Transformers (bigger image):
+
+```bash
+docker build --build-arg INCLUDE_ML=1 -t your-registry/youtube-sentiment-analysis:ml .
+```
+
 **Common registries:**
 - Docker Hub: `your-username/youtube-sentiment-analysis:latest`
 - GitHub: `ghcr.io/your-username/youtube-sentiment-analysis:latest`

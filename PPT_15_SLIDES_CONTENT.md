@@ -69,7 +69,7 @@ Progress Update | 05-02-2026
 **Content:**
 - **Batch analysis:** CSV → `data_loader` → `sentiment_analyzer` → `features` (basic/medium/advanced) → `visualizations` → reports & DB export.
 - **Real-time monitoring:** Video/Channel input → YouTube API → comment fetch → sentiment analysis → SQLite snapshot → alerts → dashboard refresh.
-- **Dashboard:** Video Browser | Live Monitoring | Sentiment History | Alerts | Manual Check.
+- **Dashboard:** Video Browser | Live Monitoring (full snapshot + trends) | Sentiment History | Alerts | Manual Check.
 
 ---
 
@@ -105,7 +105,7 @@ Progress Update | 05-02-2026
 **Content:**
 - **API integration:** YouTube Data API v3 for video metadata and comment threads; rate limiting and error handling.
 - **Persistence:** SQLite tables for sentiment history, comment snapshots, alerts, and video info cache.
-- **Dashboard:** Streamlit with session state; tabs for browsing channels, live monitoring, history, alerts, and manual checks.
+- **Dashboard:** Streamlit with session state; tabs for browsing channels, live monitoring (latest-snapshot charts + history), history, alerts, and manual checks.
 - **Deployment:** Dockerfile (Python 3.11-slim), Docker Compose, environment variables for API key; image published on Docker Hub for cross-platform use (including Windows 11).
 
 ---
@@ -118,7 +118,7 @@ Progress Update | 05-02-2026
 - **Phase 1 — Enhancement (Notebook):** Add 17+ features in Jupyter (sentiment, emoji, length, engagement, topics, aspects, reports, DB export).
 - **Phase 2 — Restructuring:** Convert notebook to modular project (`src/`, `main.py`, feature modules).
 - **Phase 3 — Real-time monitoring:** YouTube API, SQLite schema, monitoring service, alert logic.
-- **Phase 4 — Dashboard:** Streamlit UI, Video Browser, Live Monitoring, History, Alerts, Manual Check, visualizations.
+- **Phase 4 — Dashboard:** Streamlit UI, Video Browser, Live Monitoring (deep snapshot view), History, Alerts, Manual Check, visualizations.
 - **Phase 5 — Docker & docs:** Dockerfile, Compose, push to Docker Hub, Windows 11 and API key documentation.
 
 **Tip for gamma:** Use a horizontal timeline or a simple Gantt/PERT block diagram with these phases.

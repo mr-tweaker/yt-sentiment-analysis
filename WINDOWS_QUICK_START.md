@@ -56,8 +56,8 @@ docker run -d `
    - Click "Analyze Now" on any video
 
 3. **Monitor Sentiment**:
-   - Use "Live Monitoring" to track sentiment over time
-   - Use "Sentiment History" to view historical data
+   - Use **Live Monitoring** for charts on the latest comments (mood split, categories when available, sample nice/mean comments, languages) and for trends after you’ve refreshed more than once over time
+   - Use **Sentiment History** to view historical data
    - Use "Manual Check" to analyze individual videos
 
 ## Managing the Container

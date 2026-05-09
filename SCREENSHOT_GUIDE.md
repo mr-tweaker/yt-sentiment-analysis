@@ -44,9 +44,9 @@ Based on your research paper, you need screenshots for these figures:
   4. Click "🔄 Refresh Now" to fetch comments
   5. Wait for analysis to complete
   6. Take screenshot showing:
-     - Sentiment trend chart (bar chart or stacked area)
-     - Metric cards (Total Comments, Avg Sentiment, etc.)
-     - Sample comments section
+     - Sentiment distribution / histogram and any category pie or bar charts
+     - Summary metrics and Top Comments / per-language sections if visible
+     - Sample comments and, after multiple refreshes, a sentiment trend chart
 
 ### Figure 4: Manual Check Analysis Results
 - **Location:** Dashboard → Manual Check tab

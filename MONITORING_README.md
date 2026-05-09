@@ -14,6 +14,7 @@ This feature enables continuous monitoring of YouTube video comments and tracks 
 - ✅ **Keyword & Hashtag Trends**: n-grams + time bucketing + time basis toggle
 - ✅ **Per-language Sentiment**: language detection (optional) + per-language breakdown
 - ✅ **Pluggable Sentiment Backend**: TextBlob (default) or Transformers (optional)
+- ✅ **Live Monitoring (full snapshot)**: Latest DB snapshot per video with sentiment distribution, category pie/bar (when category metadata exists), statistics summary, sample comments, Top Comments, and per-language breakdown—backed by `get_latest_snapshot_full()`; time-series charts appear once you have non-empty history (e.g. multiple refreshes over hours)
 
 ## Setup
 
@@ -68,6 +69,7 @@ Features:
   - Search videos by title
   - Add videos to monitoring list
   - Run quick sentiment analysis on any video
+- **Live Monitoring**: Deep view of the **latest** snapshot (distribution, categories, stats, samples, languages) plus historical trend charts when data exists
 - Add/remove videos to monitor
 - View real-time sentiment trends
 - Check alerts

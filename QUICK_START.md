@@ -22,6 +22,7 @@ The dashboard will:
 - ✅ Show keyword/hashtag trends over time
 - ✅ Show anomaly-based alerts with explainer details
 - ✅ Show per-language sentiment (latest snapshot)
+- ✅ **Live Monitoring** tab: full snapshot analytics (distribution, category charts when available, statistics, sample comments) and time-series after you’ve built history
 
 ## Running the Monitoring Service
 

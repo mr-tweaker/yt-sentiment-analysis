@@ -115,7 +115,7 @@ export SENTIMENT_BACKEND=transformer
 export TRANSFORMER_MODEL_NAME=cardiffnlp/twitter-roberta-base-sentiment-latest
 ```
 
-4. **Configure data paths**:
+5. **Configure data paths**:
 
 Edit `src/config.py` and update the file paths to match your data location:
 - `COMMENTS_CSV`: Path to your comments CSV file
@@ -134,10 +134,13 @@ Simply run the main script:
 python main.py
 ```
 
+That run will: load and preprocess data, score sentiment, run enhancement features, generate figures and a report, and export to `output/youtube_sentiment_analysis.db`.
+
 ### Running the Monitoring Dashboard
 
 The monitoring dashboard includes:
 - ✅ **Video Browser**: fetch videos by channel ID/username/URL
+- ✅ **Live Monitoring**: headline metrics **plus** full snapshot analytics in one tab—sentiment **histogram**, **category** pie/bar charts, **statistics summary**, **sample comments** (most positive/negative), **Top Comments** filters, **per-language** chart, and **time-series** trends (when history exists)
 - ✅ **Top Comments feed**: newest/most-liked with filters (latest snapshot)
 - ✅ **Keyword & hashtag trends**: n-grams + time bucketing + snapshot vs published time basis
 - ✅ **Smarter alerts**: anomaly detection (z-score/EWMA) with explainer details + example comments
@@ -150,13 +153,7 @@ streamlit run monitoring_dashboard.py
 
 **Note**: Don’t hardcode API keys in source. Use `YOUTUBE_API_KEY` env var.
 
-This will:
-1. Load and preprocess your data
-2. Perform sentiment analysis
-3. Run all enhancement features
-4. Generate visualizations
-5. Create reports
-6. Export results to SQLite database
+Beginner-friendly setup for a friend: see **[FRIEND_QUICKSTART.md](FRIEND_QUICKSTART.md)**.
 
 ### Using Individual Modules
 

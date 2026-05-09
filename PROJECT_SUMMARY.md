@@ -68,6 +68,7 @@ This project is a comprehensive sentiment analysis system for YouTube comments t
 - **Platform:** Streamlit web application
 - **Features:**
   - 5 main tabs: Video Browser, Live Monitoring, Sentiment History, Alerts, Manual Check
+  - **Live Monitoring** loads the latest per-video snapshot via `get_latest_snapshot_full()` so sentiment distribution, category breakdown, statistics, sample comments, Top Comments, and per-language views stay consistent in one place (time-series still depends on saved history)
   - Video title display (instead of IDs)
   - Custom comment count selection
   - Real-time refresh capabilities

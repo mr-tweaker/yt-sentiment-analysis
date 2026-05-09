@@ -172,7 +172,7 @@ The Streamlit dashboard provides intuitive access to all functionality through f
 
 **Tab 1 - Video Browser:** Channel input supporting Channel ID, username, or URL, fetches up to N videos (configurable) with metadata, search functionality by video title, expandable video cards showing thumbnails and descriptions, "Add to Monitoring" button for continuous tracking, "Analyze Now" button for immediate analysis with custom comment limit selection.
 
-**Tab 2 - Live Monitoring:** Video selector dropdown populated with monitored videos displaying titles not IDs, real-time refresh button fetching latest comments, trend visualization with stacked area charts for multi-snapshot history or bar charts for single snapshots, metric cards showing current sentiment statistics, and sample comment display with color-coding by sentiment.
+**Tab 2 - Live Monitoring:** Aggregates the latest stored snapshot per monitored video (`get_latest_snapshot_full`) so one view matches Video Browser depth: sentiment histogram, category breakdown charts when `category_id`/`category_name` are present, statistical summary, Top Comments with filters, per-language sentiment, and color-coded sample comments; stacked area or line charts appear when sufficient historical snapshots exist; manual refresh persists new data to SQLite.
 
 **Tab 3 - Sentiment History:** Historical data viewer with date range selection, trend charts showing sentiment evolution over time, statistical summary tables with mean, median, min, max sentiment per date, export functionality for CSV downloads.
 

@@ -18,6 +18,8 @@ import json
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent))
 
+from src.sentiment_analyzer import add_sentiment_categories
+
 def _redact_secrets(text: object) -> str:
     """
     Redact obvious secrets from error messages before displaying them.
@@ -723,34 +725,152 @@ def main():
             
             if not history.empty:
                 latest = history.iloc[-1]
-                
-                # Convert to numeric types to avoid division errors
+
                 total_comments = pd.to_numeric(latest['total_comments'], errors='coerce')
                 positive_count = pd.to_numeric(latest['positive_count'], errors='coerce')
                 negative_count = pd.to_numeric(latest['negative_count'], errors='coerce')
                 avg_sentiment = pd.to_numeric(latest['avg_sentiment'], errors='coerce')
-                
-                # Handle division by zero or None values
+
                 if pd.isna(total_comments) or total_comments == 0:
                     positive_pct = 0.0
                     negative_pct = 0.0
                 else:
                     positive_pct = (positive_count / total_comments * 100) if not pd.isna(positive_count) else 0.0
                     negative_pct = (negative_count / total_comments * 100) if not pd.isna(negative_count) else 0.0
-                
+
                 col1, col2, col3, col4 = st.columns(4)
-                
                 with col1:
                     st.metric("Avg Sentiment", f"{avg_sentiment:.3f}" if not pd.isna(avg_sentiment) else "N/A")
-                
                 with col2:
                     st.metric("Total Comments", f"{int(total_comments):,}" if not pd.isna(total_comments) else "0")
-                
                 with col3:
                     st.metric("Positive", f"{positive_pct:.1f}%")
-                
                 with col4:
                     st.metric("Negative", f"{negative_pct:.1f}%")
+
+            full_snap = monitor.get_latest_snapshot_full(selected_video)
+
+            if not full_snap.empty:
+                snap_df = full_snap.copy()
+                snap_df["Polarity"] = snap_df["sentiment"]
+                snap_df = add_sentiment_categories(snap_df)
+                avg_snap = float(snap_df["Polarity"].mean())
+                pos_cnt = int((snap_df["Polarity"] > 0.1).sum())
+                neg_cnt = int((snap_df["Polarity"] < -0.1).sum())
+                neu_cnt = int(len(snap_df) - pos_cnt - neg_cnt)
+                n_snap = len(snap_df)
+
+                st.divider()
+                st.subheader("📊 Sentiment Distribution (latest snapshot)")
+                fig, ax = plt.subplots(figsize=(10, 6))
+                nb = min(30, max(5, n_snap // 5)) if n_snap else 10
+                sns.histplot(snap_df["Polarity"], kde=True, bins=nb, ax=ax, color="steelblue")
+                ax.axvline(avg_snap, color="r", linestyle="--", label=f"Mean: {avg_snap:.3f}")
+                ax.set_xlabel("Sentiment Polarity", fontsize=12)
+                ax.set_ylabel("Frequency", fontsize=12)
+                ax.set_title("Sentiment Distribution", fontsize=14, fontweight="bold")
+                ax.legend()
+                ax.grid(alpha=0.3)
+                st.pyplot(fig)
+                plt.close()
+
+                st.subheader("📈 Sentiment Category Breakdown")
+                sentiment_counts = snap_df["sentiment_category"].value_counts()
+                sentiment_order = ["Very Negative", "Negative", "Neutral", "Positive", "Very Positive"]
+                filtered_counts = {
+                    cat: sentiment_counts.get(cat, 0)
+                    for cat in sentiment_order
+                    if sentiment_counts.get(cat, 0) > 0
+                }
+                filtered_order = list(filtered_counts.keys())
+                filtered_values = list(filtered_counts.values())
+                if filtered_values:
+                    colors = ["#d62728", "#ff7f0e", "#bcbd22", "#2ca02c", "#1f77b4"]
+                    color_map = {
+                        cat: colors[sentiment_order.index(cat)]
+                        for cat in filtered_order
+                        if cat in sentiment_order
+                    }
+                    col_p1, col_p2 = st.columns(2)
+                    with col_p1:
+                        fig2, ax2 = plt.subplots(figsize=(8, 8))
+                        pie_colors = [color_map.get(cat, "#808080") for cat in filtered_order]
+                        ax2.pie(
+                            filtered_values,
+                            labels=filtered_order,
+                            autopct="%1.1f%%",
+                            colors=pie_colors,
+                            startangle=90,
+                            pctdistance=0.85,
+                            labeldistance=1.1,
+                            textprops={"fontsize": 10, "fontweight": "bold"},
+                            explode=[0.05 if v < sum(filtered_values) * 0.05 else 0 for v in filtered_values],
+                        )
+                        ax2.set_title("Sentiment (Pie)", fontsize=13, fontweight="bold", pad=20)
+                        plt.tight_layout()
+                        st.pyplot(fig2)
+                        plt.close()
+                    with col_p2:
+                        fig3, ax3 = plt.subplots(figsize=(8, 6))
+                        bars = ax3.bar(
+                            filtered_order,
+                            filtered_values,
+                            color=[color_map.get(cat, "#808080") for cat in filtered_order],
+                            alpha=0.8,
+                            edgecolor="black",
+                        )
+                        ax3.set_xlabel("Sentiment Category", fontsize=12, fontweight="bold")
+                        ax3.set_ylabel("Number of Comments", fontsize=12, fontweight="bold")
+                        ax3.set_title("Sentiment Category Counts", fontsize=14, fontweight="bold")
+                        ax3.tick_params(axis="x", rotation=15)
+                        ax3.grid(axis="y", alpha=0.3)
+                        ssum = sum(filtered_values)
+                        for i, bar in enumerate(bars):
+                            height = bar.get_height()
+                            pct = (filtered_values[i] / ssum) * 100 if ssum else 0
+                            ax3.text(
+                                bar.get_x() + bar.get_width() / 2.0,
+                                height,
+                                f"{int(height)}\n({pct:.1f}%)",
+                                ha="center",
+                                va="bottom",
+                                fontsize=10,
+                                fontweight="bold",
+                            )
+                        st.pyplot(fig3)
+                        plt.close()
+
+                st.subheader("📋 Statistics Summary (latest snapshot)")
+                csum1, csum2, csum3 = st.columns(3)
+                with csum1:
+                    st.metric("Positive Comments", f"{pos_cnt:,}", f"{100 * pos_cnt / n_snap:.1f}%" if n_snap else "0%")
+                with csum2:
+                    st.metric("Neutral Comments", f"{neu_cnt:,}", f"{100 * neu_cnt / n_snap:.1f}%" if n_snap else "0%")
+                with csum3:
+                    st.metric("Negative Comments", f"{neg_cnt:,}", f"{100 * neg_cnt / n_snap:.1f}%" if n_snap else "0%")
+
+                st.subheader("💬 Sample Comments")
+                sc1, sc2 = st.columns(2)
+                with sc1:
+                    st.write("**Most positive**")
+                    for _, row in snap_df.nlargest(5, "Polarity").iterrows():
+                        t = str(row["comment_text"])[:200]
+                        st.markdown(
+                            f'<div style="background:#e8f5e9;padding:8px;margin:4px 0;border-radius:4px;border-left:4px solid #4caf50;">'
+                            f'<b>[{row["Polarity"]:.3f}]</b> {t}'
+                            f'{"…" if len(str(row["comment_text"])) > 200 else ""}</div>',
+                            unsafe_allow_html=True,
+                        )
+                with sc2:
+                    st.write("**Most negative**")
+                    for _, row in snap_df.nsmallest(5, "Polarity").iterrows():
+                        t = str(row["comment_text"])[:200]
+                        st.markdown(
+                            f'<div style="background:#ffebee;padding:8px;margin:4px 0;border-radius:4px;border-left:4px solid #f44336;">'
+                            f'<b>[{row["Polarity"]:.3f}]</b> {t}'
+                            f'{"…" if len(str(row["comment_text"])) > 200 else ""}</div>',
+                            unsafe_allow_html=True,
+                        )
 
                 st.divider()
                 st.subheader("💬 Top Comments (latest snapshot)")
@@ -830,62 +950,54 @@ def main():
                             unsafe_allow_html=True,
                         )
 
-                    # Per-language sentiment summary from latest snapshot
-                    lang_df = monitor.get_latest_comments_snapshot(
-                        selected_video,
-                        limit=5000,
-                        order_by="most_liked",
-                        sentiment_filter="all",
-                        keyword="",
-                        min_likes=0,
-                    )
-                    if not lang_df.empty and "language" in lang_df.columns:
-                        lang_stats = (
-                            lang_df.groupby("language")
-                            .agg(
-                                count=("comment_id", "count"),
-                                avg_sentiment=("sentiment", "mean"),
-                            )
-                            .reset_index()
-                            .sort_values("count", ascending=False)
+                # Per-language sentiment summary from latest snapshot (full set)
+                if "language" in full_snap.columns:
+                    lang_stats = (
+                        full_snap.groupby("language")
+                        .agg(
+                            count=("comment_id", "count"),
+                            avg_sentiment=("sentiment", "mean"),
                         )
+                        .reset_index()
+                        .sort_values("count", ascending=False)
+                    )
 
-                        # Map ISO codes to human-friendly names (fallback to code)
-                        iso_map = {
-                            "en": "English",
-                            "de": "German",
-                            "fr": "French",
-                            "es": "Spanish",
-                            "it": "Italian",
-                            "pt": "Portuguese",
-                            "ru": "Russian",
-                            "ja": "Japanese",
-                            "ko": "Korean",
-                            "hi": "Hindi",
-                            "id": "Indonesian",
-                            "pl": "Polish",
-                            "ro": "Romanian",
-                            "nl": "Dutch",
-                            "tr": "Turkish",
-                            "sv": "Swedish",
-                            "fi": "Finnish",
-                            "da": "Danish",
-                            "no": "Norwegian",
-                            "cs": "Czech",
-                            "bg": "Bulgarian",
-                            "hr": "Croatian",
-                            "el": "Greek",
-                            "uk": "Ukrainian",
-                            "ar": "Arabic",
-                            "fa": "Persian",
-                            "he": "Hebrew",
-                            "th": "Thai",
-                            "vi": "Vietnamese",
-                            "zh-cn": "Chinese (Simplified)",
-                            "zh-tw": "Chinese (Traditional)",
-                            "unknown": "Unknown",
-                        }
+                    iso_map = {
+                        "en": "English",
+                        "de": "German",
+                        "fr": "French",
+                        "es": "Spanish",
+                        "it": "Italian",
+                        "pt": "Portuguese",
+                        "ru": "Russian",
+                        "ja": "Japanese",
+                        "ko": "Korean",
+                        "hi": "Hindi",
+                        "id": "Indonesian",
+                        "pl": "Polish",
+                        "ro": "Romanian",
+                        "nl": "Dutch",
+                        "tr": "Turkish",
+                        "sv": "Swedish",
+                        "fi": "Finnish",
+                        "da": "Danish",
+                        "no": "Norwegian",
+                        "cs": "Czech",
+                        "bg": "Bulgarian",
+                        "hr": "Croatian",
+                        "el": "Greek",
+                        "uk": "Ukrainian",
+                        "ar": "Arabic",
+                        "fa": "Persian",
+                        "he": "Hebrew",
+                        "th": "Thai",
+                        "vi": "Vietnamese",
+                        "zh-cn": "Chinese (Simplified)",
+                        "zh-tw": "Chinese (Traditional)",
+                        "unknown": "Unknown",
+                    }
 
+                    if not lang_stats.empty:
                         lang_stats["language_name"] = lang_stats["language"].astype(str).map(
                             lambda c: iso_map.get(c.lower(), c)
                         )
@@ -909,7 +1021,8 @@ def main():
                                 width="stretch",
                                 hide_index=True,
                             )
-                
+
+            if not history.empty:
                 # Ensure numeric types for plotting (create a copy to avoid modifying original)
                 history_plot = history.copy()
                 history_plot['avg_sentiment'] = pd.to_numeric(history_plot['avg_sentiment'], errors='coerce')
@@ -1007,9 +1120,10 @@ def main():
                 st.plotly_chart(fig, width='stretch')
                 del fig, history_sorted, history_plot  # Explicit cleanup
                 gc.collect()  # Force garbage collection
-            else:
-                st.info("No monitoring data yet. Run a manual check or start the monitoring service.")
-    
+
+            if history.empty and full_snap.empty:
+                st.info("No monitoring data yet. Click **Refresh Now** to fetch comments, or run a manual check.")
+
     # Tab 3: Sentiment History
     with tab3:
         st.subheader("Historical Sentiment Analysis")
