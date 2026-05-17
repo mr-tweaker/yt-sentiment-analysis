@@ -59,3 +59,10 @@ This document summarizes the major improvements added after the initial monitori
 - `YOUTUBE_API_KEY`: YouTube Data API v3 key
 - `SENTIMENT_BACKEND`: `textblob` (default) or `transformer`
 - `TRANSFORMER_MODEL_NAME`: optional Hugging Face model id
+
+## ✅ Documentation & figures (`screenshots/`)
+
+- Renamed dashboard captures: `video_browser.png`, `live_monitoring.png`, `manual_check.png`, `keyword_hashtag_trends.png`, `architecture.png`.
+- Added **DFD Level 0/1** via `scripts/generate_dfd_diagrams.py` → `dfd_level0.png`, `dfd_level1.png` (+ `.dot` sources).
+- Updated **README.md**, **SCREENSHOT_GUIDE.md**, **FIGURE_CAPTIONS_AND_PLACEMENT.md**, **SHORT_FIGURE_CAPTIONS.md** to match current filenames and regeneration commands.
+- Removed legacy `Figure2.png`–`Figure8.png` / `Pasted image.png` from the repo (superseded by descriptive names).

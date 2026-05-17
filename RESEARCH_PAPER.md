@@ -673,16 +673,16 @@ The authors thank the content creators and social media analysts who participate
 
 **Word Count: ~3,250 words**
 
-**Figure Placeholders: 9 figures**
-- Figure 1: System architecture diagram
-- Figure 2: Video Browser tab screenshot
-- Figure 3: Live Monitoring tab screenshot
-- Figure 4: Manual Check analysis results
-- Figure 5: Correlation heatmap
-- Figure 6: Topic modeling visualization
-- Figure 7: Aspect-based sentiment bar chart
-- Figure 8: 30-day sentiment trends with alerts
-- Figure 9: Sentiment recovery case study
+**Figures in repository (`screenshots/`):**
+- Fig. 1: `architecture.png` — system architecture
+- Fig. 2: `video_browser.png` — Video Browser tab
+- Fig. 3: `live_monitoring.png` — Live Monitoring tab
+- Fig. 4: `manual_check.png` — Manual Check tab
+- Fig. 5: `keyword_hashtag_trends.png` — keyword/hashtag trends
+- Fig. 6: `dfd_level0.png` — DFD context diagram
+- Fig. 7: `dfd_level1.png` — DFD Level 1
+
+Optional batch outputs (LDA, heatmaps, etc.) may be added from `output/figures/` when running `main.py`. See `FIGURE_CAPTIONS_AND_PLACEMENT.md`.
 
 **Table Placeholders: 4 tables**
 - Table 1: Dataset statistics by category

@@ -1,161 +1,80 @@
-# Screenshot Guide for Research Paper
+# Screenshot & Diagram Guide
 
-## Container Status
+This folder documents figures under `screenshots/` for papers, reports, and demos.
 
-✅ **Container is running:** `youtube-sentiment-screenshots`  
-✅ **Dashboard URL:** http://localhost:8501  
-✅ **API Key:** Pre-configured in container
+## Current assets in `screenshots/`
 
-## Access the Dashboard
+| File | Use |
+|------|-----|
+| `architecture.png` | System architecture (four layers) |
+| `video_browser.png` | Video Browser tab |
+| `live_monitoring.png` | Live Monitoring tab |
+| `manual_check.png` | Manual Check tab |
+| `keyword_hashtag_trends.png` | Keyword & hashtag trends |
+| `dfd_level0.png` | DFD Level 0 (context diagram) |
+| `dfd_level1.png` | DFD Level 1 (processes + data stores) |
+| `dfd_level0.dot` / `dfd_level1.dot` | Graphviz source — edit and re-render |
 
-1. **Open your web browser** and navigate to:
-   ```
-   http://localhost:8501
-   ```
+Legacy numbered files (`Figure2.png`, etc.) were replaced by the descriptive names above.
 
-2. **Wait for the dashboard to load** (may take 10-15 seconds on first load)
+## Regenerate diagrams from code
 
-## Screenshots Needed for Research Paper
-
-Based on your research paper, you need screenshots for these figures:
-
-### Figure 1: System Architecture Diagram
-- **Location:** Create a diagram showing the 4-layer architecture
-- **Tools:** Use draw.io, Lucidchart, or PowerPoint
-- **Shows:** Presentation Layer → Application Layer → Data Layer → Infrastructure Layer
-- **Include:** Data flow arrows, component labels
-
-### Figure 2: Video Browser Tab
-- **Location:** Dashboard → Video Browser tab
-- **Steps:**
-  1. Enter a YouTube channel ID/URL (e.g., `UC_x5XG1OV2P6uZZ5FSM9Ttw` for Google Developers)
-  2. Set "Max Videos" to 5-10
-  3. Set "Max Comments per Video" to 100-500
-  4. Click "Fetch Videos"
-  5. Wait for videos to load
-  6. Take screenshot showing the video list with expandable cards
-
-### Figure 3: Live Monitoring Tab
-- **Location:** Dashboard → Live Monitoring tab
-- **Steps:**
-  1. First, add a video to monitoring (use Video Browser → "Add to Monitoring")
-  2. Go to Live Monitoring tab
-  3. Select a video from dropdown
-  4. Click "🔄 Refresh Now" to fetch comments
-  5. Wait for analysis to complete
-  6. Take screenshot showing:
-     - Sentiment distribution / histogram and any category pie or bar charts
-     - Summary metrics and Top Comments / per-language sections if visible
-     - Sample comments and, after multiple refreshes, a sentiment trend chart
-
-### Figure 4: Manual Check Analysis Results
-- **Location:** Dashboard → Manual Check tab
-- **Steps:**
-  1. Enter a YouTube video ID or URL (e.g., `dQw4w9WgXcQ` or any popular video)
-  2. Set comment limit (e.g., 200)
-  3. Click "Analyze Video"
-  4. Wait for analysis (may take 30-60 seconds)
-  5. Take screenshot showing:
-     - Sentiment Distribution histogram
-     - Category Breakdown pie chart
-     - Word Cloud (if generated)
-     - Sample Comments section
-     - Statistics table
-
-### Figure 5: Correlation Heatmap
-- **Location:** This would be generated from analysis results
-- **Note:** You may need to run analysis and export data, then create heatmap in Python/Jupyter
-- **Shows:** Correlation between sentiment, engagement metrics, comment length, emoji count
-
-### Figure 6: Topic Modeling Visualization
-- **Location:** Generated from topic modeling feature
-- **Note:** May need to run advanced analysis or create visualization manually
-- **Shows:** 5 topics with keywords and sentiment scores per topic
-
-### Figure 7: Aspect-Based Sentiment Bar Chart
-- **Location:** Generated from aspect analysis
-- **Note:** May need to run advanced analysis or create visualization manually
-- **Shows:** 12 aspects (video quality, audio, content, etc.) with sentiment scores
-
-### Figure 8: 30-Day Sentiment Trends with Alerts
-- **Location:** Dashboard → Sentiment History tab
-- **Steps:**
-  1. Ensure you have historical data (run monitoring for multiple days or use existing data)
-  2. Go to Sentiment History tab
-  3. Select a video with historical data
-  4. Take screenshot showing:
-     - Time series chart with sentiment trends
-     - Alert markers (if any alerts were triggered)
-     - Date range selector
-
-### Figure 9: Case Study - Sentiment Recovery
-- **Location:** Dashboard → Alerts tab or Sentiment History
-- **Steps:**
-  1. Look for videos with alert history
-  2. Show sentiment trend before and after intervention
-  3. May need to create a custom visualization showing recovery pattern
-
-## Tips for Taking Good Screenshots
-
-1. **Full Screen:** Use browser full-screen mode (F11) for cleaner screenshots
-2. **High Resolution:** Ensure your display is set to high resolution
-3. **Clean UI:** Close unnecessary browser tabs, hide bookmarks bar
-4. **Consistent Style:** Use the same browser and zoom level (100%) for all screenshots
-5. **Annotate:** Consider adding arrows or labels in PowerPoint/Image editor if needed
-6. **File Format:** Save as PNG for best quality
-
-## Quick Test Video IDs for Screenshots
-
-- **Popular Tech Channel:** `UC_x5XG1OV2P6uZZ5FSM9Ttw` (Google Developers)
-- **Popular Video:** `dQw4w9WgXcQ` (Rick Astley - Never Gonna Give You Up)
-- **Educational:** Search for any educational channel ID
-
-## Container Management Commands
+**DFD (Level 0 & 1)** — aligned with `src/data_loader.py`, `youtube_monitor.py`, `sentiment_analyzer.py`, `monitoring_dashboard.py`:
 
 ```bash
-# View logs
-docker logs youtube-sentiment-screenshots
-
-# Stop container
-docker stop youtube-sentiment-screenshots
-
-# Start container again
-docker start youtube-sentiment-screenshots
-
-# Remove container (when done)
-docker rm -f youtube-sentiment-screenshots
-
-# Restart container
-docker restart youtube-sentiment-screenshots
+python scripts/generate_dfd_diagrams.py
 ```
 
-## Troubleshooting
+Requires [Graphviz](https://graphviz.org/) `dot` on your PATH for PNG export. Without `dot`, use the generated `.dot` files in [Graphviz Online](https://dreampuf.github.io/GraphvizOnline/).
 
-### Dashboard not loading?
-- Wait 10-15 seconds for Streamlit to fully start
-- Check logs: `docker logs youtube-sentiment-screenshots`
-- Try accessing: http://127.0.0.1:8501 instead of localhost
+**Layered architecture** (optional alternate to `architecture.png`):
 
-### No videos found?
-- Make sure API key is valid
-- Try a different channel ID
-- Check YouTube API quota limits
-
-### Analysis taking too long?
-- Reduce comment limit (try 50-100 comments first)
-- Use smaller videos with fewer comments
-
-### Need to reset?
 ```bash
-docker restart youtube-sentiment-screenshots
+python scripts/generate_figure1_architecture.py
 ```
 
-## Next Steps
+## Capture UI screenshots
 
-1. ✅ Container is running
-2. Open http://localhost:8501 in your browser
-3. Start taking screenshots following the guide above
-4. Save screenshots in a dedicated folder for easy access
-5. Insert screenshots into your research paper at the designated figure locations
+1. Run the dashboard: `streamlit run monitoring_dashboard.py` (or Docker on port 8501).
+2. Set browser zoom to **100%**, hide clutter, use PNG export.
+3. Save with the filenames above so docs and captions stay consistent.
 
-Good luck with your research paper! 🎓
+### Video Browser → `video_browser.png`
+
+1. Open **Video Browser**.
+2. Enter channel ID, `@handle`, or channel URL.
+3. Set max videos (5–10) and comments per video (100–500).
+4. Click **Fetch Videos**; capture the list with titles and actions.
+
+### Live Monitoring → `live_monitoring.png`
+
+1. Add a video from Video Browser (**Add to Monitoring**).
+2. Open **Live Monitoring**, select the video, **Refresh Now**.
+3. Capture headline metrics, sentiment distribution, and scroll for Top Comments / trends if visible.
+
+### Manual Check → `manual_check.png`
+
+1. Open **Manual Check**.
+2. Paste video URL or ID; set comment limit (e.g. 200); run analysis.
+3. Capture histogram and summary metrics.
+
+### Keyword & hashtag trends → `keyword_hashtag_trends.png`
+
+1. From Live Monitoring (or trends section), set window, bucket, n-grams.
+2. Toggle **snapshot time** vs **published time** if timestamps exist.
+3. Capture chart and table.
+
+## Docker (optional)
+
+```bash
+docker pull mrtweaker/youtube-sentiment-analysis:latest
+docker run -d --name youtube-sentiment -p 8501:8501 -e YOUTUBE_API_KEY=your_key mrtweaker/youtube-sentiment-analysis:latest
+```
+
+Open http://localhost:8501. See [DOCKER_README.md](DOCKER_README.md).
+
+## Tips
+
+- PNG for print; keep labels readable at report scale.
+- Never commit API keys; use environment variables.
+- For batch-only demos, use `python main.py` and figures under `output/figures/`.

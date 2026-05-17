@@ -56,7 +56,7 @@ The system employs four-layer architecture (Figure 1):
 **Infrastructure Layer:** Docker containerization (Python 3.11-slim), Docker Compose orchestration, environment variables, health checks.
 
 ```
-[FIGURE 1: System architecture diagram showing four layers with data flow from YouTube API through processing to dashboard]
+[FIGURE 1: screenshots/architecture.png — four layers; DFDs: dfd_level0.png, dfd_level1.png]
 ```
 
 ### B. Data Collection and Preprocessing

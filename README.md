@@ -66,6 +66,10 @@ YouTube-Sentiment_Analysis/
 │       ├── medium_features.py  # Medium complexity features
 │       └── advanced_features.py # Advanced features (topic modeling, etc.)
 ├── main.py                     # Main entry point
+├── scripts/
+│   ├── generate_figure1_architecture.py  # Layered architecture PNG
+│   └── generate_dfd_diagrams.py        # DFD Level 0/1 (.dot + .png)
+├── screenshots/                # Report/paper figures (see SCREENSHOT_GUIDE.md)
 ├── requirements.txt            # Python dependencies
 ├── README.md                   # This file
 ├── ENHANCEMENT_IDEAS.md        # Feature ideas document
@@ -233,6 +237,27 @@ TextBlob("This video is absolutely amazing!").sentiment.polarity  # returns valu
   - Sentiment distribution histograms
   - Correlation heatmaps
   - Category and channel comparisons
+
+## Documentation figures (`screenshots/`)
+
+| File | Description |
+|------|-------------|
+| `architecture.png` | Four-layer system architecture |
+| `video_browser.png` | Video Browser tab |
+| `live_monitoring.png` | Live Monitoring tab |
+| `manual_check.png` | Manual Check tab |
+| `keyword_hashtag_trends.png` | Keyword/hashtag trends |
+| `dfd_level0.png` / `dfd_level1.png` | Context and Level 1 DFDs |
+| `dfd_level0.dot` / `dfd_level1.dot` | Graphviz source (editable) |
+
+Regenerate architecture and DFDs:
+
+```bash
+python scripts/generate_figure1_architecture.py   # writes screenshots/Figure1_System_Architecture.png if used
+python scripts/generate_dfd_diagrams.py           # writes dfd_level0/1 .dot and .png
+```
+
+See **[SCREENSHOT_GUIDE.md](SCREENSHOT_GUIDE.md)** and **[FIGURE_CAPTIONS_AND_PLACEMENT.md](FIGURE_CAPTIONS_AND_PLACEMENT.md)** for captions and capture steps.
 
 ## Output
 
